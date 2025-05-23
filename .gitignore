@@ -1,0 +1,23 @@
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore dataset
+Fruits_Vegetables/
+image-classification.keras
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Data files (if large or confidential)
+data/
+
+# Environment files
+.env
+venv/
+ENV/
+
+# Ignore virtual environment directories
+.virtual_documents/
+anaconda_projects/
+
+models/
