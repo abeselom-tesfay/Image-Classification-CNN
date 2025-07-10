@@ -5,7 +5,7 @@ import streamlit as st
 import numpy as np 
 
 st.header('Image Classification Model')
-model = load_model('E:\Projects\Python\Image-Classification-CNN\Image_classify.keras')
+model = load_model('E:/Projects/Python/Image-Classification-CNN/Image_classify.keras')
 data_cat = ['apple',
  'banana',
  'beetroot',
@@ -44,7 +44,7 @@ data_cat = ['apple',
  'watermelon']
 img_height = 180
 img_width = 180
-image =st.text_input('Enter Image name','Apple.jpg')
+image =st.text_input('Enter Image name','Sample/Apple.jpg')
 
 image_load = tf.keras.utils.load_img(image, target_size=(img_height,img_width))
 img_arr = tf.keras.utils.array_to_img(image_load)
