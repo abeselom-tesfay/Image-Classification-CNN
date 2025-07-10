@@ -3,7 +3,7 @@
 
 # Ignore dataset
 Fruits_Vegetables/
-image-classification.keras
+Image_classify.keras
 # Python bytecode
 __pycache__/
 *.py[cod]
