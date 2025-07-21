@@ -1,18 +1,15 @@
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-from PIL import Image
 import numpy as np
+import cv2
 
-# App Title
 st.title('🍎🥦 Image Classification - Fruits & Vegetables')
 st.subheader('Upload an image to classify its content')
 
-# Load trained model
-model_path = 'models/image_classify.keras'
-model = load_model(model_path)
+MODEL_PATH = 'models/image_classify.keras'
+model = load_model(MODEL_PATH)
 
-# Class labels
 data_cat = [
     'apple', 'banana', 'beetroot', 'bell pepper', 'cabbage', 'capsicum', 'carrot',
     'cauliflower', 'chilli pepper', 'corn', 'cucumber', 'eggplant', 'garlic', 'ginger',
@@ -21,30 +18,38 @@ data_cat = [
     'soy beans', 'spinach', 'sweetcorn', 'sweetpotato', 'tomato', 'turnip', 'watermelon'
 ]
 
-img_height, img_width = 180, 180
+IMG_HEIGHT, IMG_WIDTH = 180, 180
 
-# File uploader
 uploaded_file = st.file_uploader("📤 Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     try:
-        # Load and display image
-        image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption='Uploaded Image', width=250)
+        # Read image file bytes to numpy array (in memory)
+        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+        image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-        # Preprocess image
-        image = image.resize((img_width, img_height))
-        img_array = tf.keras.utils.img_to_array(image)
-        img_batch = np.expand_dims(img_array, axis=0)
+        if image is None:
+            raise ValueError("Could not decode image. Please upload a valid image file.")
 
+        # Convert BGR to RGB
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image_resized = cv2.resize(image_rgb, (IMG_WIDTH, IMG_HEIGHT))
+
+        # Show uploaded image
+        st.image(image_resized, caption='Uploaded Image', width=250)
+
+        # Prepare batch dimension and normalize if needed
+        img_batch = np.expand_dims(image_resized, axis=0)
+
+        # Predict
         prediction = model.predict(img_batch)
         score = tf.nn.softmax(prediction[0])
         predicted_class = data_cat[np.argmax(score)]
         confidence = np.max(score) * 100
 
-        # Display result
+        # Display prediction
         st.success(f"🔍 Prediction: **{predicted_class.capitalize()}**")
         st.write(f"🧠 Confidence: **{confidence:.2f}%**")
 
     except Exception as e:
-        st.error(f"Error processing image: {e}")
+        st.error(f"❌ Error processing image: {e}")
